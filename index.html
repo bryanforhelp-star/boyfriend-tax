@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Turn their screen time into your flight time. Bill every hour they game and watch a tiny plane fly to your trip.">
+<title>Boyfriend Tax</title>
+<meta property="og:title" content="Boyfriend Tax">
+<meta property="og:description" content="Turn their screen time into your flight time. Bill every hour they game and watch a tiny plane fly to your trip.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233340f0' transform='rotate(90 12 12)' d='M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M13 3 4 14h7l-1 7 9-11h-7z"/></symbol>
+  <symbol id="i-trip" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" transform="rotate(90 12 12)" d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></symbol>
+  <symbol id="i-rcpt" viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8h18v12H3zM3 8l2-4h14l2 4M10 12h4"/></symbol>
+</svg>
+
+<div id="win" class="window">
+  <!-- desktop window chrome -->
+  <header class="titlebar"><span class="lights"><i></i><i></i><i></i></span><span id="title">Boyfriend Tax</span></header>
+  <!-- phone top bar -->
+  <div class="mtop"><b class="logo" id="mLogo">bf tax.</b><button class="pill edit-pill" data-act="settings"><span class="av sm" id="mAv">A</span>Edit</button></div>
+
+  <div class="toolbar">
+    <button class="pill" data-act="toggle" id="tbPlay">▶ Start timer</button>
+    <div class="lcd" aria-live="off">
+      <span><b id="lH">0H 00M</b> played</span>
+      <span><b id="lO">$0</b> owed</span>
+      <span><b id="lP">0%</b> to <span id="lC">Tokyo</span></span>
+    </div>
+    <button class="pill" data-act="invoice">Send invoice</button>
+  </div>
+
+  <div class="body">
+    <nav class="side" aria-label="Sections">
+      <small>Tracking</small>
+      <button data-view="playtime"><svg><use href="#i-play"/></svg>Playtime<span class="tag green" id="sLive" hidden>LIVE</span></button>
+      <button data-view="penalties"><svg><use href="#i-pen"/></svg>Penalties</button>
+      <small>The goal</small>
+      <button data-view="trip"><svg><use href="#i-trip"/></svg><span id="sTrip">Trip fund</span></button>
+      <button data-view="receipts"><svg><use href="#i-rcpt"/></svg>Receipts<span class="count" id="sCount"></span></button>
+      <small>You</small>
+      <button data-act="settings"><svg><use href="#i-edit"/></svg>Names, rate &amp; fund</button>
+      <button data-act="more"><svg><use href="#i-box"/></svg>Backup &amp; more</button>
+      <button class="me" data-act="settings" title="Change who's paying"><span class="av" id="av">A</span><span><b id="meName">Alex</b><small id="meSub">boyfriend · GTA VI</small></span><span class="me-edit">Edit</span></button>
+    </nav>
+
+    <main class="main">
+      <!-- 1. playtime: the timer and what it costs -->
+      <section class="view" id="v-playtime">
+        <div class="vh"><h1>playtime</h1></div>
+        <div class="card timer">
+          <div class="meta"><b id="tWho">Alex</b><span id="tState">isn't playing</span><span class="tag green" id="tLive" hidden>LIVE</span><button class="edit-link" data-act="editWho"><svg><use href="#i-edit"/></svg>Change who</button></div>
+          <div class="clock" id="clock">00:00:00</div>
+          <div class="sofar" id="sofar"></div>
+          <div class="acts">
+            <button class="gel big" data-act="toggle" id="play">▶ Started playing</button>
+            <button class="pill" data-act="log">Add hours I forgot</button>
+          </div>
+        </div>
+        <div class="card math">
+          <div><small>Time played</small><b id="H">0h 00m</b></div>
+          <div><small>× Rate</small><b id="R">$20/hr</b></div>
+          <div><small>+ Penalties</small><b id="F">$0</b></div>
+          <div class="owe"><small id="oweLbl">= Owes</small><b id="own">$0</b></div>
+        </div>
+        <div class="sec"><small>Sessions</small><button class="link" data-view="receipts">All receipts →</button></div>
+        <div id="sessRows"></div>
+      </section>
+
+      <!-- 2. penalties ("one more mission" and friends) -->
+      <section class="view" id="v-penalties" hidden>
+        <div class="vh"><h1>penalties</h1></div>
+        <p class="lede" id="pLede"></p>
+        <div class="pgrid" id="pens"></div>
+        <div class="sec"><small>Charged</small></div>
+        <div id="penRows"></div>
+      </section>
+
+      <!-- 3. the money goal -->
+      <section class="view" id="v-trip" hidden>
+        <div class="vh"><h1><span class="hl" id="tDest">japan</span> fund</h1><button class="pill" data-act="editFund"><svg><use href="#i-edit"/></svg> Rename fund &amp; costs</button></div>
+        <div class="card tripc">
+          <div class="route"><i class="line"></i><i class="done" id="rDone"></i>
+            <svg class="plane" id="plane" viewBox="0 0 24 24"><use href="#i-trip"/></svg></div>
+          <div class="ends"><span id="rHome">Home</span><span id="rCity">Tokyo</span></div>
+          <div class="fundline"><b id="fAmt">$0</b><span id="fOf">of $1,500</span><span class="pc" id="fPc">0%</span></div>
+          <div class="abar"><i id="fBar"></i></div>
+          <div class="items" id="items"></div>
+        </div>
+      </section>
+
+      <!-- 4. receipts: every session and penalty -->
+      <section class="view" id="v-receipts" hidden>
+        <div class="vh"><h1>receipts</h1><div class="seg" id="seg"></div></div>
+        <div class="rwrap">
+          <div class="paper" id="paper"></div>
+          <div class="racts">
+            <button class="gel" data-act="invoice">Send invoice</button>
+            <button class="pill" data-act="log">Add hours I forgot</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- phone tab bar -->
+  <nav class="tabs" aria-label="Sections">
+    <button data-view="playtime"><span class="ti"><svg><use href="#i-play"/></svg></span>Playtime</button>
+    <button data-view="penalties"><span class="ti"><svg><use href="#i-pen"/></svg></span>Penalties</button>
+    <button data-view="trip"><span class="ti"><svg><use href="#i-trip"/></svg></span>Trip</button>
+    <button data-view="receipts"><span class="ti"><svg><use href="#i-rcpt"/></svg></span>Receipts</button>
+  </nav>
+</div>
+
+<div class="toast" id="toast" hidden><span id="tText"></span><button class="link" id="undo" hidden>Undo</button></div>
+<input type="file" id="file" accept="application/json,.json" hidden>
+<script src="app.js"></script>
+</body>
+</html>
