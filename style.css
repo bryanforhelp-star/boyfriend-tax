@@ -396,3 +396,5 @@ h1 { margin: 0; font: 900 58px/1.02 var(--sans); letter-spacing: -.06em; }
 .gm[open] summary { margin-bottom: 8px; }
 .gm #gmail { display: inline-flex; margin-top: 8px; text-decoration: none; }
 @media (pointer: coarse) { .gm summary { padding: 8px 0; } .gm #gmail { min-height: 44px; } }
+.lite { font-weight: 400; color: var(--muted); }
+.hint.warn { color: #b4351f; }

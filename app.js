@@ -220,16 +220,17 @@ const ACTIONS = {
         <div class="kv"><span>Penalties</span><span>${money(t.fees)}</span></div>
         <hr><div class="kv total"><span>TOTAL DUE</span><span>${money(t.fund)}</span></div>
         <div class="kv"><span>✈ ${esc(s.dest)} fund</span><span>${Math.floor(t.pct * 100)}% there</span></div></div>
-        <div class="f sendto"><label>Send to: ${esc(whoTag())}'s email</label>
+        <div class="f sendto"><label>To: ${esc(whoTag())}'s email <span class="lite">(who gets the invoice)</span></label>
         <input name="email" type="email" value="${esc(s.email)}" placeholder="them@email.com" autocomplete="off" autocapitalize="off" spellcheck="false">
         <p class="hint">"Email it" opens your email app with every line written out. It sends from that app's main account. Nothing is sent from this site.</p></div>
         <details class="f gm"${s.from ? " open" : ""}><summary>Use Gmail instead</summary>
-        <label>Your Gmail, so it opens the right account</label>
+        <label>From: your Gmail <span class="lite">(the account it sends from)</span></label>
         <input name="from" type="email" value="${esc(s.from || "")}" placeholder="you@gmail.com" autocomplete="email" autocapitalize="off" spellcheck="false">
+        <p class="hint warn" id="same" hidden>To and From are the same address, so this sends the invoice to yourself.</p>
         <a class="pill" id="gmail" target="_blank" rel="noopener">Open in Gmail →</a></details>`,
       onOpen(f) {
         const g = f.querySelector("#gmail");
-        const upd = () => { g.href = "https://mail.google.com/mail/?" + (from(f) ? "authuser=" + encodeURIComponent(from(f)) + "&" : "") +
+        const upd = () => { f.querySelector("#same").hidden = !(addr(f) && addr(f).toLowerCase() === from(f).toLowerCase()); g.href = "https://mail.google.com/mail/?" + (from(f) ? "authuser=" + encodeURIComponent(from(f)) + "&" : "") +
           "view=cm&fs=1&to=" + encodeURIComponent(addr(f)) +
           "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text); };
         f.elements.email.addEventListener("input", upd); f.elements.from.addEventListener("input", upd); upd();
