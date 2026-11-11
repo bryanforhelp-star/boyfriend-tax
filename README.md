@@ -33,8 +33,9 @@ Four tabs, plus a strip at the top that always shows hours played, what they owe
 - **Receipts.** Every session and penalty on one long receipt, with totals and an UNPAID stamp. Tap × to remove a
   line; Undo brings it back.
 - **Send invoice, whenever you like.** Type their email once and "Email it" opens your email app with the whole
-  invoice written out, line by line. There's a Gmail option too, plus Copy, and Text it on a phone. The app never
-  sends anything itself; the email goes from your own account.
+  invoice written out, line by line. It sends from your email app's main account. To pick the account, use Gmail
+  instead and type your Gmail address, and it opens in that account. There's also Copy, and Text it on a phone.
+  The app never sends anything itself; the email goes from your own account.
 - **Names, rate & fund.** Change who's paying (boyfriend, girlfriend…), their name and email, the game, the rate,
   the fund's name and what it costs. There are Edit buttons right where those show up, too. The currency, penalty
   amounts and overtime are under More settings.

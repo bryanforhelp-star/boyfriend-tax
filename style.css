@@ -307,7 +307,6 @@ h1 { margin: 0; font: 900 58px/1.02 var(--sans); letter-spacing: -.06em; }
 .fs h3 + .hint { margin: 0 0 4px; }
 .preview { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 999px; background: #eef0ff; color: var(--blue); font: 600 12px var(--sans); }
 .sendto { margin-top: 14px; }
-.sendto .alt { display: block; margin-top: 8px; font-size: 12.5px; }
 
 /* ---------- toast (status + undo) ---------- */
 .toast {
@@ -390,3 +389,10 @@ h1 { margin: 0; font: 900 58px/1.02 var(--sans); letter-spacing: -.06em; }
   .pcard .gel, .racts > *, .acts .pill { min-height: 44px; }
   .f details summary { padding: 8px 0; }
 }
+
+/* invoice sheet: Gmail with the right account */
+.gm { margin-top: 10px; }
+.gm summary { cursor: pointer; color: var(--blue); font-size: 12.5px; font-weight: 600; }
+.gm[open] summary { margin-bottom: 8px; }
+.gm #gmail { display: inline-flex; margin-top: 8px; text-decoration: none; }
+@media (pointer: coarse) { .gm summary { padding: 8px 0; } .gm #gmail { min-height: 44px; } }

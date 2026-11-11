@@ -10,7 +10,7 @@ const VIEWS = ["playtime", "penalties", "trip", "receipts"];
 const DEFAULTS = {
   label: "boyfriend", name: "", game: "GTA VI", place: "Vice City",
   rate: 20, cur: "$", dest: "Japan", city: "Tokyo", home: "Home",
-  otAfter: 0, otX: 1.5, interest: 15, lateFee: 50, email: "",
+  otAfter: 0, otX: 1.5, interest: 15, lateFee: 50, email: "", from: "",
   items: [["Flight, 1 seat", 840], ["Hotel, 7 nights", 520], ["Ramen, matcha", 140]],
 };
 
@@ -207,8 +207,10 @@ const ACTIONS = {
     const t = totals(), s = S.settings, text = invoiceText();
     const subject = `Invoice: ${appName()}, ${money(t.fund)} due`;
     const canText = !!navigator.share && matchMedia("(pointer:coarse)").matches;
-    const addr = f => f.elements.email.value.trim().replace(/[^\w.@+'-]/g, "");
-    const keep = f => { const a = addr(f); if (a !== s.email) { s.email = a; save(); } return a; };
+    const clean = v => v.trim().replace(/[^\w.@+'-]/g, "");
+    const addr = f => clean(f.elements.email.value), from = f => clean(f.elements.from.value);
+    const keep = f => { const a = addr(f), m = from(f); if (a !== s.email || m !== s.from) { s.email = a; s.from = m; save(); } return a; };
+    const to = a => a ? `, addressed to <b>${esc(a)}</b>` : "";
     const sent = how => setTimeout(() => alertBox("warn", `Invoice sent to ${whoMid()}.`,
       `Total due: ${money(t.fund)}. ${esc(who())} has been notified during a mission.<br><span class="fine">${how}</span>`), 0);
     dialog({
@@ -218,16 +220,21 @@ const ACTIONS = {
         <div class="kv"><span>Penalties</span><span>${money(t.fees)}</span></div>
         <hr><div class="kv total"><span>TOTAL DUE</span><span>${money(t.fund)}</span></div>
         <div class="kv"><span>✈ ${esc(s.dest)} fund</span><span>${Math.floor(t.pct * 100)}% there</span></div></div>
-        <div class="f sendto"><label>${esc(whoTag())}'s email</label>
+        <div class="f sendto"><label>Send to: ${esc(whoTag())}'s email</label>
         <input name="email" type="email" value="${esc(s.email)}" placeholder="them@email.com" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <p class="hint">Opens your email app with every line of the invoice written out. Nothing is sent from this site.</p>
-        <a class="link alt" id="gmail" target="_blank" rel="noopener">Use Gmail instead</a></div>`,
+        <p class="hint">"Email it" opens your email app with every line written out. It sends from that app's main account. Nothing is sent from this site.</p></div>
+        <details class="f gm"${s.from ? " open" : ""}><summary>Use Gmail instead</summary>
+        <label>Your Gmail, so it opens the right account</label>
+        <input name="from" type="email" value="${esc(s.from || "")}" placeholder="you@gmail.com" autocomplete="email" autocapitalize="off" spellcheck="false">
+        <a class="pill" id="gmail" target="_blank" rel="noopener">Open in Gmail →</a></details>`,
       onOpen(f) {
         const g = f.querySelector("#gmail");
-        const upd = () => { g.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(addr(f)) +
+        const upd = () => { g.href = "https://mail.google.com/mail/?" + (from(f) ? "authuser=" + encodeURIComponent(from(f)) + "&" : "") +
+          "view=cm&fs=1&to=" + encodeURIComponent(addr(f)) +
           "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text); };
-        f.elements.email.addEventListener("input", upd); upd();
-        g.addEventListener("click", () => { keep(f); setTimeout(() => { $$(".overlay").forEach(o => o.remove()); sent("It opened in Gmail. Hit send."); }, 0); });
+        f.elements.email.addEventListener("input", upd); f.elements.from.addEventListener("input", upd); upd();
+        g.addEventListener("click", () => { const a = keep(f); setTimeout(() => { $$(".overlay").forEach(o => o.remove());
+          sent(`It opened in Gmail${from(f) ? ` as <b>${esc(from(f))}</b>` : ""}${to(a)}. Hit send.`); }, 0); });
       },
       buttons: [
         { label: "Copy", async action(f) { keep(f);
@@ -239,7 +246,7 @@ const ACTIONS = {
           const a = keep(f);
           if (a && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a)) return bad(f, "email");
           location.href = `mailto:${a}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-          sent("It opened in your email app. Hit send.");
+          sent(`It opened in your email app${to(a)}. Check the From line, then hit send.`);
         } },
       ],
     });
