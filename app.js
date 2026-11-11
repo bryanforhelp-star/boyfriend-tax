@@ -252,7 +252,7 @@ const ACTIONS = {
     say(`Removed ${e.label}.`, () => { S.entries.push(e); S.entries.sort((a, b) => a.ts - b.ts); save(); render(); checkFunded(); });
   },
 
-  settings() { settingsDialog(false, "name"); },
+  settings() { settingsDialog(false, matchMedia("(pointer:coarse)").matches ? null : "name"); },   // no surprise keyboard on phones
   editWho() { settingsDialog(false, "name"); },
   editFund() { settingsDialog(false, "dest"); },
 
@@ -542,6 +542,8 @@ function render() {
   document.title = winTitle();
   $("#title").textContent = winTitle();
   $("#mLogo").textContent = logo();
+  // the name under the Home Screen icon: "BF Tax", "GF Tax", "Partner Tax"…
+  $("#appTitle").content = (({ boyfriend: "BF", girlfriend: "GF" })[s.label] || cap1(s.label || "partner")) + " Tax";
   const initial = (s.name || s.label || "?").charAt(0).toUpperCase();
   $("#av").textContent = initial; $("#mAv").textContent = initial;
   $("#meName").textContent = whoTag();

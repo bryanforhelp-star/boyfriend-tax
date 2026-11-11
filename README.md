@@ -42,7 +42,8 @@ Four tabs, plus a strip at the top that always shows hours played, what they owe
 
 ## Use it
 
-There's no install and no build step. It's three files: `index.html`, `style.css` and `app.js`.
+There's no install and no build step. The app is `index.html`, `style.css` and `app.js`, plus its icons and
+`manifest.webmanifest` (so it can live on a Home Screen).
 
 - **On your computer:** download this folder and open `index.html` in your browser.
 - **Online, for free (pick one):**
@@ -50,7 +51,8 @@ There's no install and no build step. It's three files: `index.html`, `style.css
     puts it online. There's nothing to configure.
   - **GitHub Pages:** fork the repo, then go to Settings → Pages → Deploy from branch → `main`.
   - **Netlify Drop:** download the folder and drag it onto netlify.com/drop. No GitHub account needed.
-- **On your phone:** open your hosted link, then use Share → Add to Home Screen. It looks and works like an app.
+- **On your phone:** open the link, then use Share → Add to Home Screen. It gets its own icon and opens full screen,
+  like an app.
 
 ## Your data
 
@@ -59,6 +61,8 @@ analytics and no server. That has two consequences:
 
 - If you clear your browser data, your history goes with it. Use Export backup now and then.
 - Data doesn't sync between devices. To move it to another device, export a backup there and import it.
+- On iPhone, Safari can clear a website's data if you don't open it for about 7 days. Adding the app to your Home
+  Screen avoids that.
 
 ## Change the code
 
