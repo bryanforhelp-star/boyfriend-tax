@@ -10,7 +10,7 @@ const VIEWS = ["playtime", "penalties", "trip", "receipts"];
 const DEFAULTS = {
   label: "boyfriend", name: "", game: "GTA VI", place: "Vice City",
   rate: 20, cur: "$", dest: "Japan", city: "Tokyo", home: "Home",
-  otAfter: 0, otX: 1.5, interest: 15, lateFee: 50, email: "", from: "",
+  otAfter: 0, otX: 1.5, interest: 15, lateFee: 50, email: "",
   items: [["Flight, 1 seat", 840], ["Hotel, 7 nights", 520], ["Ramen, matcha", 140]],
 };
 
@@ -208,8 +208,8 @@ const ACTIONS = {
     const subject = `Invoice: ${appName()}, ${money(t.fund)} due`;
     const canText = !!navigator.share && matchMedia("(pointer:coarse)").matches;
     const clean = v => v.trim().replace(/[^\w.@+'-]/g, "");
-    const addr = f => clean(f.elements.email.value), from = f => clean(f.elements.from.value);
-    const keep = f => { const a = addr(f), m = from(f); if (a !== s.email || m !== s.from) { s.email = a; s.from = m; save(); } return a; };
+    const addr = f => clean(f.elements.email.value);
+    const keep = f => { const a = addr(f); if (a !== s.email) { s.email = a; save(); } return a; };
     const to = a => a ? `, addressed to <b>${esc(a)}</b>` : "";
     const sent = how => setTimeout(() => alertBox("warn", `Invoice sent to ${whoMid()}.`,
       `Total due: ${money(t.fund)}. ${esc(who())} has been notified during a mission.<br><span class="fine">${how}</span>`), 0);
@@ -220,22 +220,17 @@ const ACTIONS = {
         <div class="kv"><span>Penalties</span><span>${money(t.fees)}</span></div>
         <hr><div class="kv total"><span>TOTAL DUE</span><span>${money(t.fund)}</span></div>
         <div class="kv"><span>✈ ${esc(s.dest)} fund</span><span>${Math.floor(t.pct * 100)}% there</span></div></div>
-        <div class="f sendto"><label>To: ${esc(whoTag())}'s email <span class="lite">(who gets the invoice)</span></label>
+        <div class="f sendto"><label>Send to: ${esc(whoTag())}'s email</label>
         <input name="email" type="email" value="${esc(s.email)}" placeholder="them@email.com" autocomplete="off" autocapitalize="off" spellcheck="false">
-        <p class="hint">"Email it" opens your email app with every line written out. It sends from that app's main account. Nothing is sent from this site.</p></div>
-        <details class="f gm"${s.from ? " open" : ""}><summary>Use Gmail instead</summary>
-        <label>From: your Gmail <span class="lite">(the account it sends from)</span></label>
-        <input name="from" type="email" value="${esc(s.from || "")}" placeholder="you@gmail.com" autocomplete="email" autocapitalize="off" spellcheck="false">
-        <p class="hint warn" id="same" hidden>To and From are the same address, so this sends the invoice to yourself.</p>
-        <a class="pill" id="gmail" target="_blank" rel="noopener">Open in Gmail →</a></details>`,
+        <p class="hint">Opens your email with the invoice written out, addressed to them. It sends from your own account, so their address goes here, not yours.</p>
+        <a class="link alt" id="gmail" target="_blank" rel="noopener">Use Gmail instead</a></div>`,
       onOpen(f) {
         const g = f.querySelector("#gmail");
-        const upd = () => { f.querySelector("#same").hidden = !(addr(f) && addr(f).toLowerCase() === from(f).toLowerCase()); g.href = "https://mail.google.com/mail/?" + (from(f) ? "authuser=" + encodeURIComponent(from(f)) + "&" : "") +
-          "view=cm&fs=1&to=" + encodeURIComponent(addr(f)) +
+        const upd = () => { g.href = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(addr(f)) +
           "&su=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text); };
-        f.elements.email.addEventListener("input", upd); f.elements.from.addEventListener("input", upd); upd();
+        f.elements.email.addEventListener("input", upd); upd();
         g.addEventListener("click", () => { const a = keep(f); setTimeout(() => { $$(".overlay").forEach(o => o.remove());
-          sent(`It opened in Gmail${from(f) ? ` as <b>${esc(from(f))}</b>` : ""}${to(a)}. Hit send.`); }, 0); });
+          sent(`It opened in Gmail${to(a)}. Hit send.`); }, 0); });
       },
       buttons: [
         { label: "Copy", async action(f) { keep(f);
@@ -247,7 +242,7 @@ const ACTIONS = {
           const a = keep(f);
           if (a && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a)) return bad(f, "email");
           location.href = `mailto:${a}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-          sent(`It opened in your email app${to(a)}. Check the From line, then hit send.`);
+          sent(`It opened in your email app${to(a)}. Hit send.`);
         } },
       ],
     });
